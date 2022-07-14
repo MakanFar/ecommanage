@@ -8,9 +8,7 @@ import {
 } from "react-router-dom";
 
 // pages
-import Login from "./pages/auth";
 import DashboardContent from "./pages/dashboard";
-import { AuthContext } from "./context/authContext";
 
 import InvoiceList from "./pages/invoiceList";
 
@@ -25,7 +23,7 @@ const App = () => {
       <>
       
           <Routes>
-            <Route path="/login" element={<Auth />} />
+            <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<DashboardContent />} />
             <Route path="/business" element={<SignupBusiness />} />
             <Route path="/invoices" element={<InvoiceList />} />

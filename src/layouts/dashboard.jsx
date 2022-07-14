@@ -12,8 +12,8 @@ import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems, secondaryListItems } from '../components/listItems';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 
 const drawerWidth = 240;
@@ -103,8 +103,8 @@ const DashboardLayout =({children}) =>{
               Dashboard
             </Typography>
             <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
+              <Badge  color="secondary">
+                <ExitToAppIcon />
               </Badge>
             </IconButton>
           </Toolbar>

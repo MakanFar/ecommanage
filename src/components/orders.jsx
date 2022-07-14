@@ -17,20 +17,7 @@ export default function Orders() {
 
   const [itemList, setItemList] = useState([])
 
-  useEffect(() => {
-    refreshItemList();
-  }, [])
-
-
-  function refreshItemList() {
-    const getOrders = axios.get('https://sheetdb.io/api/v1/zmtrya7kgc2ln')
-    .then( response => { 
-      
-      setItemList(response.data)
-      console.log(response.data);
-    }
-    );
-  }
+ 
   return (
     <React.Fragment>
       <Title>Recent Orders</Title>

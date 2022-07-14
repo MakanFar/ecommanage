@@ -99,17 +99,40 @@ const Auth = () => {
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
-            <Box component="form" noValidate sx={{ mt: 1 }}>
+
+            
+            <Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleSubmit(loginUser)}>
+              
+            {errors?.loginEmail && (
+                <Typography style={{ color: 'red' }}>
+                  {errors.loginEmail.message}
+                </Typography>
+              )}
+
               <TextField
                 margin="normal"
                 required
                 fullWidth
                 id="email"
-                label="Email Address"
+                label="Email"
                 name="email"
                 autoComplete="email"
                 autoFocus
+                {...register('loginEmail', {
+                  required: 'Please provide a valid email',
+                  pattern: {
+                    value: emailFormat,
+                    message: 'Enter a valid email',
+                  },
+                })}
               />
+
+              {errors?.loginPassword && (
+                <Typography style={{ color: 'red' }}>
+                  {errors.loginPassword.message}
+                </Typography>
+              )}
+
               <TextField
                 margin="normal"
                 required
@@ -119,11 +142,16 @@ const Auth = () => {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+
+                {...register('loginPassword', {
+                  required: 'Please enter a password',
+                  minLength: {
+                    value: 8,
+                    message: 'Password must contain at least 8 characters',
+                  },
+                })}
               />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
+             
               <Button
                 type="submit"
                 fullWidth

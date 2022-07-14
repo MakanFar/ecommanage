@@ -1,5 +1,5 @@
-import * as React from 'react';
-
+import React, { useEffect, useState } from 'react';
+import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
@@ -7,12 +7,49 @@ import Chart from '../components/charts';
 import Deposits from '../components/deposits';
 import Orders from '../components/orders';
 import DashboardLayout from '../layouts/dashboard';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { query, collection, where, onSnapshot } from '@firebase/firestore';
+import {db} from '../firebase/firebase';
+import Loading from '../components/loading';
 
 
 function DashboardContent() {
 
+  const user = useSelector((state) => state.user.user);
+  const [invoices, setInvoices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user.id) return navigate('/auth');
+    try {
+      const q = query(
+        collection(db, 'invoices'),
+        where('user_id', '==', user.id)
+      );
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const firebaseInvoices = [];
+        querySnapshot.forEach((doc) => {
+          firebaseInvoices.push({ data: doc.data(), id: doc.id });
+        });
+        setInvoices(firebaseInvoices);
+        setLoading(false);
+        return () => unsubscribe();
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }, [navigate, user.id]);
+
+
 
   return (
+
+    <>
+      {loading ? (
+        <Loading />
+      ) : (
     
      <DashboardLayout>
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
@@ -51,8 +88,14 @@ function DashboardContent() {
               </Grid>
             </Grid>
           </Container>
+          <Button variant="contained" onClick={() => navigate('/invoices')}>Contained</Button>
+
 
        </DashboardLayout>
+
+
+      )}
+  </>
      
   );
 }
