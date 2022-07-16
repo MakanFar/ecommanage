@@ -2717,7 +2717,7 @@
     "@testing-library/dom" "^8.5.0"
     "@types/react-dom" "^18.0.0"
 
-"@testing-library/user-event@^14.2.3":
+"@testing-library/user-event@^14.2.5":
   version "14.2.5"
   resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-14.2.5.tgz#a27a16ee7f915c22c62b9c065d743248ee79dcb6"
   integrity sha512-xcSw47H8JidxQPAqPlHp4l51EYJx+2TlHgYBW9i+noNlgUMMrhgtefnrWcpZ1k9ep6SMhJVyx3N7F4tIKTuJ9w==
@@ -7874,7 +7874,7 @@ makeerror@1.0.12:
   dependencies:
     tmpl "1.0.5"
 
-material-table@^2.0.3:
+material-table@2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/material-table/-/material-table-2.0.3.tgz#88feff706ecd079942bd0c91684e06f858d2ea13"
   integrity sha512-jr+BZIITa52TruOn4uuFwgCjoPSlso5CFygFLVvHIWLU/GRfb64VgvJ5W8SaMfsni+b5l3KpWSberRsjWGStTw==

@@ -15,6 +15,7 @@ import InvoiceList from "./pages/invoiceList";
 import Auth from "./pages/auth";
 
 import SignupBusiness from "./pages/signupBusiness";
+import InvoiceDetail from "./pages/invoiceDetail";
 
 const App = () => {
 
@@ -27,6 +28,7 @@ const App = () => {
             <Route path="/dashboard" element={<DashboardContent />} />
             <Route path="/business" element={<SignupBusiness />} />
             <Route path="/invoices" element={<InvoiceList />} />
+            <Route path="/view/invoice/:id" element={<InvoiceDetail/>}/>
           </Routes>
      
       </>

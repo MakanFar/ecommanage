@@ -10,6 +10,18 @@ export const findGrandTotal = ( { itemList } ) => {
   };
 
 
+  export const findGrossInvoice = ( { itemList } ) => {
+
+    let total = 0;
+
+    for (let i = 0; i < itemList.length; i++) {
+      const amount = (itemList[i].itemSold * itemList[i].itemQuantity) - ((itemList[i].itemCost * itemList[i].itemRate) * itemList[i].itemQuantity);
+      total += amount;
+    }
+    return `${total.toLocaleString('en-US')}`;
+  };
+
+
   export const findDebtTotal = ( { itemList } ) => {
     let debt = 0;
 
