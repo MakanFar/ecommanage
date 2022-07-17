@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import { query, collection, where, onSnapshot } from '@firebase/firestore';
 import {db} from '../firebase/firebase';
 import Loading from '../components/loading';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
 function DashboardContent() {
@@ -20,27 +21,36 @@ function DashboardContent() {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
+  const auth = getAuth();
+  const uid = '';
   useEffect(() => {
-    if (!user.id) return navigate('/auth');
-    try {
-      const q = query(
-        collection(db, 'invoices'),
-        where('user_id', '==', user.id)
-      );
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const firebaseInvoices = [];
-        querySnapshot.forEach((doc) => {
-          firebaseInvoices.push({ data: doc.data(), id: doc.id });
+
+    onAuthStateChanged(auth, (user) => {
+
+      if (!user) return navigate('/auth');
+      const uid = user.uid;
+
+      try {
+        const q = query(
+          collection(db, 'invoices'),
+          where('user_id', '==', uid)
+        );
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+          const firebaseInvoices = [];
+          querySnapshot.forEach((doc) => {
+            firebaseInvoices.push({ data: doc.data(), id: doc.id });
+          });
+          setInvoices(firebaseInvoices);
+          setLoading(false);
+          return () => unsubscribe();
         });
-        setInvoices(firebaseInvoices);
-        setLoading(false);
-        return () => unsubscribe();
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }, [navigate, user.id]);
+      } catch (error) {
+        console.log(error);
+      }
+     
+    });
+    
+  }, [ uid]);
 
 
 
@@ -88,7 +98,6 @@ function DashboardContent() {
               </Grid>
             </Grid>
           </Container>
-          <Button variant="contained" onClick={() => navigate('/invoices')}>Contained</Button>
 
 
        </DashboardLayout>

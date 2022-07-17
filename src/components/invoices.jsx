@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import MaterialTable from 'material-table'
-import { findGrandTotal, findDebtTotal } from '../utils/functions';
+import { findGrandTotal, findDebtTotal, findLength } from '../utils/functions';
 import {db} from '../firebase/firebase';
 import { doc, deleteDoc, updateDoc, addDoc, serverTimestamp, collection } from 'firebase/firestore';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
@@ -18,7 +18,7 @@ const InvoiceTable = ({ invoices }) => {
 
   const columns = [
     { title: "Name", field: "data.customerName" },
-    { title: "Invoices (#)", field: "data.itemList.length",editable: 'never' },
+    { title: "Invoices (#)", field: "lenght",editable: 'never',render:(row)=>findLength(row.data) },
     { title: "Total (Rial)", field: "total", editable: 'never',render:(row)=>findGrandTotal(row.data)},
     { title: "Debt (Rial)", field: 'debt' , editable: 'never',render:(row)=>findDebtTotal(row.data)},
   ]
@@ -61,12 +61,6 @@ const InvoiceTable = ({ invoices }) => {
         console.log(err);
       });
   }
-
-
-  useEffect(() => {
-    if (!user.id) return navigate('/auth');
-    setLoading(false);
-  }, [navigate, user.id]);
 
   return (
     <div className="App">

@@ -20,7 +20,8 @@ import { useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase/firebase';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 
@@ -54,6 +55,9 @@ const Auth = () => {
         navigate('/business');
       })
       .catch((error) => {
+        
+        toast.error('Something went wrong!');
+        
       });
   };
 
@@ -62,10 +66,15 @@ const Auth = () => {
       .then((userCredential) => {
         const user = userCredential.user;
         dispatch(setUser({ id: user.uid, email: user.email }));
-        navigate('/business');
+        navigate('/dashboard');
       })
       .catch((error) => {
-        alert(error)
+        if(error.code === 'auth/wrong-password'){
+          toast.error('Please check the Password');
+        }
+        if(error.code === 'auth/user-not-found'){
+          toast.error('Please check the Email');
+        }
       });
   };
 
@@ -82,6 +91,7 @@ const Auth = () => {
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
         <AuthSide />
+        <ToastContainer />
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
         {createAccount ? (
           <Box

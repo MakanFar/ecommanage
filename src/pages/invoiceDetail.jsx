@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setInvoice } from '../redux/invoice';
 import { useNavigate } from 'react-router-dom';
 import {db} from '../firebase/firebase';
-import CreateInvoiceTable from '../components/createInvoiceTable';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Loading from '../components/loading';
 import { doc ,query, collection, where, onSnapshot, serverTimestamp, addDoc} from '@firebase/firestore';
 import ItemListTable from '../components/itemListTable'
@@ -31,13 +31,19 @@ const InvoiceDetail = () => {
     const [loading, setLoading] = useState(true);
     const [invoiceDetails, setInvoiceDetails] = useState(null);
     const [businessDetails, setBusinessDetails] = useState(null);
-
+    const auth = getAuth();
+    const uid = '';
     useEffect(() => {
-        if (!user.id) return navigate('/auth');
+
+      onAuthStateChanged(auth, (user) => {
+
+        if (!user) return navigate('/auth');
+        const uid = user.uid;
+
         try {
           const q = query(
             collection(db, 'businesses'),
-            where('user_id', '==', user.id)
+            where('user_id', '==', uid)
           );
           onSnapshot(q, (querySnapshot) => {
             const firebaseBusinesses = [];
@@ -56,7 +62,15 @@ const InvoiceDetail = () => {
         } catch (error) {
           console.error(error);
         }
-      }, [id, navigate, user.id]);
+       
+
+
+
+
+      });
+
+      
+      }, [id, navigate, uid]);
 
 
 

@@ -18,6 +18,7 @@ import {db} from '../firebase/firebase';
 import CreateInvoiceTable from '../components/createInvoiceTable';
 import Loading from '../components/loading';
 import { query, collection, where, onSnapshot, serverTimestamp, addDoc} from '@firebase/firestore';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
 
@@ -38,27 +39,36 @@ const [itemList, setItemList] = useState([]);
 const dispatch = useDispatch();
 const user = useSelector((state) => state.user.user);
 const [loading, setLoading] = useState(true);
+const auth = getAuth();
+const uid = '';
 
 useEffect(() => {
-  if (!user.id) return navigate('/auth');
-  try {
-    const q = query(
-      collection(db, 'invoices'),
-      where('user_id', '==', user.id)
-    );
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const firebaseInvoices = [];
-      querySnapshot.forEach((doc) => {
-        firebaseInvoices.push({ data: doc.data(), id: doc.id });
+  onAuthStateChanged(auth, (user) => {
+
+    if (!user) return navigate('/auth');
+    const uid = user.uid;
+
+    try {
+      const q = query(
+        collection(db, 'invoices'),
+        where('user_id', '==', uid)
+      );
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const firebaseInvoices = [];
+        querySnapshot.forEach((doc) => {
+          firebaseInvoices.push({ data: doc.data(), id: doc.id });
+        });
+        setInvoices(firebaseInvoices);
+        setLoading(false);
+        return () => unsubscribe();
       });
-      setInvoices(firebaseInvoices);
-      setLoading(false);
-      return () => unsubscribe();
-    });
-  } catch (error) {
-    console.log(error);
-  }
-}, [navigate, user.id]);
+    } catch (error) {
+      console.log(error);
+    }
+
+  });
+ 
+}, [uid]);
 
 
   const {

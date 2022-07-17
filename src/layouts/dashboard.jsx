@@ -14,6 +14,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { mainListItems, secondaryListItems } from '../components/listItems';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase/firebase";
 
 
 const drawerWidth = 240;
@@ -21,7 +23,8 @@ const drawerWidth = 240;
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
+
+ x: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -35,6 +38,8 @@ const AppBar = styled(MuiAppBar, {
     }),
   }),
 }));
+
+
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
@@ -65,6 +70,9 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const mdTheme = createTheme();
 
 const DashboardLayout =({children}) =>{
+  const logOut = () => {
+    signOut(auth);
+      };
 
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
@@ -102,7 +110,7 @@ const DashboardLayout =({children}) =>{
             >
               Dashboard
             </Typography>
-            <IconButton color="inherit">
+            <IconButton color="inherit" onClick={logOut}>
               <Badge  color="secondary">
                 <ExitToAppIcon />
               </Badge>

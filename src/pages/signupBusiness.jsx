@@ -25,6 +25,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import {db} from '../firebase/firebase';
 import { useSelector } from 'react-redux';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
 const theme = createTheme();
@@ -37,30 +38,36 @@ const SignupBusiness = () => {
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const auth = getAuth();
+  const uid = '';
 
 
   useEffect(() => {
-    if (!user.id) return navigate('/login');
-    try {
-      const q = query(
-        collection(db, 'businesses'),
-        where('user_id', '==', user.id)
-      );
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const business = [];
-        querySnapshot.forEach((doc) => {
-          business.push(doc.data().name);
+
+    onAuthStateChanged(auth, (user) => {
+
+      if (!user) return navigate('/auth');
+      const uid = user.uid;
+      try {
+        const q = query(
+          collection(db, 'businesses'),
+          where('user_id', '==', uid)
+        );
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+          const business = [];
+          querySnapshot.forEach((doc) => {
+            business.push(doc.data().name);
+          });
+          if (business.length > 0) {
+            navigate('/dashboard');
+          }
         });
-        setLoading(false);
-        if (business.length > 0) {
-          navigate('/dashboard');
-        }
-      });
-      return () => unsubscribe();
-    } catch (error) {
-      console.log(error);
-    }
-  }, [navigate, user.id]);
+        return () => unsubscribe();
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  }, [navigate, uid]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
