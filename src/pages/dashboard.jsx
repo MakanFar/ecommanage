@@ -17,12 +17,14 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 function DashboardContent() {
 
-  const user = useSelector((state) => state.user.user);
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const auth = getAuth();
-  const uid = '';
+  const user = auth.currentUser;
+  let uid=''
+
+
   useEffect(() => {
 
     onAuthStateChanged(auth, (user) => {

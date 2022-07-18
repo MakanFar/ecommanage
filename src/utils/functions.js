@@ -57,7 +57,7 @@ export const findGrandTotal = ( { itemList } ) => {
 
       for (let i = 0; i < itemList.length; i++) {
 
-        const amount = (itemList[i].itemSold * itemList[i].itemQuantity) - (itemList[i].itemPaid * itemList[i].itemQuantity);
+        const amount = (itemList[i].itemSold * itemList[i].itemQuantity) - itemList[i].itemPaid;
   
         debt += amount;
       }

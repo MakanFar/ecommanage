@@ -26,23 +26,25 @@ import { useNavigate } from 'react-router-dom';
 import {db} from '../firebase/firebase';
 import { useSelector } from 'react-redux';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const theme = createTheme();
 
 const SignupBusiness = () => {
 
-  const user = useSelector((state) => state.user.user);
   const [businessName, setBusinessName] = useState('');
   const [currency, setCurrency] = useState('');
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const auth = getAuth();
-  const uid = '';
+  const user = auth.currentUser;
+  let uid='';
 
 
   useEffect(() => {
+    
 
     onAuthStateChanged(auth, (user) => {
 
@@ -67,20 +69,27 @@ const SignupBusiness = () => {
         console.log(error);
       }
     });
-  }, [navigate, uid]);
+  }, [uid]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const docRef = await addDoc(collection(db, 'businesses'), {
-      user_id: user.id,
-      businessName,
-      currency,
-
-    });
-    {
-      
-      navigate('/dashboard');
+    try {
+      e.preventDefault();
+      const docRef = await addDoc(collection(db, 'businesses'), {
+        user_id: user.uid,
+        businessName,
+        currency,
+  
+      });
+      {
+        toast.success('Registration was successful.');
+     
+        navigate('/dashboard');
+      }
+    } catch (e) {
+      toast.error('Something went wrong!');
+      console.log(e)
     }
+   
   };
  
 
@@ -89,6 +98,7 @@ const SignupBusiness = () => {
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
         <AuthSide />
+        <ToastContainer />
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <Box
             sx={{

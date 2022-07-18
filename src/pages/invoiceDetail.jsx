@@ -1,18 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
-import { useForm } from 'react-hook-form';
-import InvoiceTable from '../components/invoices';
-import TextField from '@mui/material/TextField';
+
 import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
 import DashboardLayout from '../layouts/dashboard';
-import Typography from '@mui/material/Typography';
-import InputAdornment from '@mui/material/InputAdornment';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import { useDispatch, useSelector } from 'react-redux';
-import { setInvoice } from '../redux/invoice';
+
 import { useNavigate } from 'react-router-dom';
 import {db} from '../firebase/firebase';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -26,14 +16,17 @@ import { useParams } from 'react-router-dom';
 const InvoiceDetail = () => {
 
     const { id } = useParams();
-    const user = useSelector((state) => state.user.user);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [invoiceDetails, setInvoiceDetails] = useState(null);
     const [businessDetails, setBusinessDetails] = useState(null);
     const auth = getAuth();
-    const uid = '';
+    const user = auth.currentUser;
+    let uid='';
+
+    
     useEffect(() => {
+
 
       onAuthStateChanged(auth, (user) => {
 
@@ -70,7 +63,7 @@ const InvoiceDetail = () => {
       });
 
       
-      }, [id, navigate, uid]);
+      }, [id,  uid]);
 
 
 

@@ -3,18 +3,22 @@ import MaterialTable from 'material-table'
 import { findGrandTotal, findDebtTotal, findLength } from '../utils/functions';
 import {db} from '../firebase/firebase';
 import { doc, deleteDoc, updateDoc, addDoc, serverTimestamp, collection } from 'firebase/firestore';
-import FileOpenIcon from '@mui/icons-material/FileOpen';
 import { useNavigate } from 'react-router-dom';
-
-import { useSelector } from 'react-redux';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const InvoiceTable = ({ invoices }) => {
 
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user.user);
+  
   const [tableData, setTableData] = useState(invoices)
   const [selectedRows, setSelectedRows] = useState([])
-  const [loading, setLoading] = useState(true);
+  const auth = getAuth();
+  const user = auth.currentUser;
+  let uid=''
+
+  
 
   const columns = [
     { title: "Name", field: "data.customerName" },
@@ -50,22 +54,34 @@ const InvoiceTable = ({ invoices }) => {
   async function addInvoice(name) {
 
     await addDoc(collection(db, 'invoices'), {
-      user_id: user.id,
+      user_id: user.uid,
       customerName: name,
       timestamp: serverTimestamp(),
     })
       .then(() => {
-        alert("done");
+        toast.success("Invoice was added.");
       })
       .catch((err) => {
         console.log(err);
+        toast.error("Something went wrong!");
       });
   }
 
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+  
+      if (!user) return navigate('/auth');
+      const uid = user.uid;
+  
+    });
+   
+  }, [navigate ,uid]);
+
   return (
     <div className="App">
+      <ToastContainer />
       <MaterialTable
-        title="Employee Data"
+        title="Invoice list"
         data={tableData}
         onSelectionChange={(rows) => setSelectedRows(rows)}
         columns={columns}
@@ -85,13 +101,10 @@ const InvoiceTable = ({ invoices }) => {
 
             onRowUpdate: (newData, oldData) => new Promise((resolve, reject) => {
 
-            setTimeout(() => {
 
               updateInvoice(oldData.id, newData.data.customerName)
 
-              resolve();
-
-             }, 1000)
+          
             }),
             
         
