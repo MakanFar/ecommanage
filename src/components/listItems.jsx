@@ -6,6 +6,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import { useNavigate } from 'react-router-dom';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import ReceiptIcon from '@mui/icons-material/Receipt';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 
 
 
@@ -20,7 +21,13 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItemButton>
-    <ListItemButton href="/invoices">
+    <ListItemButton href="/clients">
+      <ListItemIcon>
+        <PeopleAltIcon />
+      </ListItemIcon>
+      <ListItemText primary="Clients"  />
+    </ListItemButton>
+    <ListItemButton href="/clients">
       <ListItemIcon>
         <ReceiptIcon />
       </ListItemIcon>

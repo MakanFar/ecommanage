@@ -8,21 +8,28 @@ import {db} from '../firebase/firebase';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Loading from '../components/loading';
 import { doc ,query, collection, where, onSnapshot, serverTimestamp, addDoc} from '@firebase/firestore';
-import ItemListTable from '../components/itemListTable'
+import InvoiceTable from '../components/invoiceTable'
 import { useParams } from 'react-router-dom';
 
 
 
-const InvoiceDetail = () => {
+const Invoices = () => {
 
     const { id } = useParams();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+    const [invoices, setInvoices] = useState([]);
+
     const [invoiceDetails, setInvoiceDetails] = useState(null);
     const [businessDetails, setBusinessDetails] = useState(null);
     const auth = getAuth();
     const user = auth.currentUser;
     let uid='';
+
+    const props = {
+      client: id,
+      invoices: invoices,
+    };
 
     
     useEffect(() => {
@@ -32,38 +39,28 @@ const InvoiceDetail = () => {
 
         if (!user) return navigate('/auth');
         const uid = user.uid;
-
+    
         try {
+          const docRef = doc(db, "clients", id);
           const q = query(
-            collection(db, 'businesses'),
-            where('user_id', '==', uid)
+            collection(docRef, 'invoices')
           );
-          onSnapshot(q, (querySnapshot) => {
-            const firebaseBusinesses = [];
+          const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const firebaseInvoices = [];
             querySnapshot.forEach((doc) => {
-              firebaseBusinesses.push({ data: doc.data(), id: doc.id });
+              firebaseInvoices.push({ data: doc.data(), id: doc.id });
             });
-            setBusinessDetails(firebaseBusinesses);
-          });
-          if (id) {
-            const unsub = onSnapshot(doc(db, 'invoices', id), (doc) => {
-              setInvoiceDetails({ data: doc.data(), id: doc.id });
-            });
+            setInvoices(firebaseInvoices);
             setLoading(false);
-            return () => unsub();
-          }
+            return () => unsubscribe();
+          });
         } catch (error) {
-          console.error(error);
+          console.log(error);
         }
-       
-
-
-
-
+    
       });
-
-      
-      }, [id,  uid]);
+     
+    }, [uid]);
 
 
 
@@ -83,11 +80,11 @@ const InvoiceDetail = () => {
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
 
 
-        {invoiceDetails && (
+       
+
+               <InvoiceTable {...props} />
                 
-                  <ItemListTable invoice={invoiceDetails} />
-                
-              )}
+             
           
         </Container>
 
@@ -101,4 +98,4 @@ const InvoiceDetail = () => {
   );
 }
 
-export default InvoiceDetail;
+export default Invoices;

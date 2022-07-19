@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import { useForm } from 'react-hook-form';
-import InvoiceTable from '../components/invoices';
+import ClientTable from '../components/clientTable';
 import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
@@ -12,20 +12,18 @@ import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { useDispatch, useSelector } from 'react-redux';
-import { setInvoice } from '../redux/invoice';
 import { useNavigate } from 'react-router-dom';
 import {db} from '../firebase/firebase';
-import CreateInvoiceTable from '../components/createInvoiceTable';
 import Loading from '../components/loading';
 import { query, collection, where, onSnapshot, serverTimestamp, addDoc} from '@firebase/firestore';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
 
-const InvoiceList = () => {
+const ClientList = () => {
 
 const navigate = useNavigate();
-const [invoices, setInvoices] = useState([]);
+const [clients, setClients] = useState([]);
 const [loading, setLoading] = useState(true);
 const auth = getAuth();
 const user = auth.currentUser;
@@ -40,15 +38,15 @@ useEffect(() => {
 
     try {
       const q = query(
-        collection(db, 'invoices'),
+        collection(db, 'clients'),
         where('user_id', '==', uid)
       );
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const firebaseInvoices = [];
+        const firebaseClients = [];
         querySnapshot.forEach((doc) => {
-          firebaseInvoices.push({ data: doc.data(), id: doc.id });
+          firebaseClients.push({ data: doc.data(), id: doc.id });
         });
-        setInvoices(firebaseInvoices);
+        setClients(firebaseClients);
         setLoading(false);
         return () => unsubscribe();
       });
@@ -81,7 +79,7 @@ useEffect(() => {
                   <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
                     
                       
-                      <InvoiceTable invoices={invoices} /> 
+                      <ClientTable clients={clients} /> 
 
               
                   </Paper>
@@ -101,4 +99,4 @@ useEffect(() => {
   );
 }
 
-export default InvoiceList;
+export default ClientList;

@@ -8,11 +8,11 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const InvoiceTable = ({ invoices }) => {
+const ClientTable = ({ clients }) => {
 
   const navigate = useNavigate();
   
-  const [tableData, setTableData] = useState(invoices)
+  const [tableData, setTableData] = useState(clients)
   const [selectedRows, setSelectedRows] = useState([])
   const auth = getAuth();
   const user = auth.currentUser;
@@ -28,18 +28,18 @@ const InvoiceTable = ({ invoices }) => {
   ]
 
 
-  async function deleteInvoice(id) {
+  async function deleteClient(id) {
     try {
-      await deleteDoc(doc(db, 'invoices', id));
+      await deleteDoc(doc(db, 'clients', id));
       alert("success")
     } catch (err) {
       alert(err)
     }
   }
 
-  async function updateInvoice(id, name) {
+  async function updateClient(id, name) {
 
-    const docRef = doc(db, "invoices", id);
+    const docRef = doc(db, "inclientsvoices", id);
     try {
       await updateDoc(docRef, {
         customerName: name
@@ -51,15 +51,15 @@ const InvoiceTable = ({ invoices }) => {
     }
   }
 
-  async function addInvoice(name) {
+  async function addClient(name) {
 
-    await addDoc(collection(db, 'invoices'), {
+    await addDoc(collection(db, 'clients'), {
       user_id: user.uid,
       customerName: name,
       timestamp: serverTimestamp(),
     })
       .then(() => {
-        toast.success("Invoice was added.");
+        toast.success("Client was added.");
       })
       .catch((err) => {
         console.log(err);
@@ -81,7 +81,7 @@ const InvoiceTable = ({ invoices }) => {
     <div className="App">
       <ToastContainer />
       <MaterialTable
-        title="Invoice list"
+        title="Client list"
         data={tableData}
         onSelectionChange={(rows) => setSelectedRows(rows)}
         columns={columns}
@@ -90,19 +90,19 @@ const InvoiceTable = ({ invoices }) => {
 
           onRowAdd: (newData) => new Promise((resolve, reject) => {
 
-            addInvoice(newData.data.customerName)
+            addClient(newData.data.customerName)
          
           }),
           onRowDelete: (oldData) => new Promise((resolve, reject) => {
            
-            deleteInvoice(oldData.id)
+            deleteClient(oldData.id)
 
             }),
 
             onRowUpdate: (newData, oldData) => new Promise((resolve, reject) => {
 
 
-              updateInvoice(oldData.id, newData.data.customerName)
+              updateClient(oldData.id, newData.data.customerName)
 
           
             }),
@@ -114,7 +114,7 @@ const InvoiceTable = ({ invoices }) => {
             icon: 'description',
             tooltip: 'Open',
             onClick: (event, rowData) => { 
-              navigate(`/view/invoice/${rowData.id}/`)
+              navigate(`/view/client/${rowData.id}/`)
               
             }
           }
@@ -124,4 +124,4 @@ const InvoiceTable = ({ invoices }) => {
   );
 }
 
-export default InvoiceTable;
+export default ClientTable;

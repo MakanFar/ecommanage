@@ -10,12 +10,12 @@ import {
 // pages
 import DashboardContent from "./pages/dashboard";
 
-import InvoiceList from "./pages/invoiceList";
+import ClientList from "./pages/clients";
 
 import Auth from "./pages/auth";
 
 import SignupBusiness from "./pages/signupBusiness";
-import InvoiceDetail from "./pages/invoiceDetail";
+import Invoices from "./pages/invoices";
 
 const App = () => {
 
@@ -27,8 +27,8 @@ const App = () => {
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<DashboardContent />} />
             <Route path="/business" element={<SignupBusiness />} />
-            <Route path="/invoices" element={<InvoiceList />} />
-            <Route path="/view/invoice/:id" element={<InvoiceDetail/>}/>
+            <Route path="/clients" element={<ClientList />} />
+            <Route path="/view/client/:id" element={<Invoices/>}/>
           </Routes>
      
       </>
