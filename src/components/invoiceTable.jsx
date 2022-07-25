@@ -131,6 +131,14 @@ const InvoiceTable = ( {client, invoices} ) => {
                 onRowDelete: (oldData) => new Promise((resolve, reject) => {
 
                   deleteInvoice(oldData.id);
+                  setTimeout(() => {
+                    const dataDelete = [...tableData];
+                    const index = oldData.tableData.id;
+                    dataDelete.splice(index, 1);
+                    setTableData([...dataDelete]);
+                    
+                    resolve()
+                  }, 1000)
 
                   
                   }),
@@ -146,6 +154,14 @@ const InvoiceTable = ( {client, invoices} ) => {
                       newData.data.itemQuantity,
                       newData.data.itemPaid,
                       );
+                      setTimeout(() => {
+                        const dataUpdate = [...tableData];
+                        const index = oldData.tableData.id;
+                        dataUpdate[index] = newData;
+                        setTableData([...dataUpdate]);
+        
+                        resolve();
+                    }, 1000);
 
                     
                     }),
@@ -160,6 +176,13 @@ const InvoiceTable = ( {client, invoices} ) => {
                       newData.data.itemQuantity,
                       newData.data.itemPaid,
                       )
+                      setTimeout(() => {
+                        {
+                          const updatedRows = [...tableData, { id: Math.floor(Math.random() * 100), ...newData }]
+                          setTableData(updatedRows)
+                        }
+                        resolve()
+                      }, 1000)
                  
                   }),
 

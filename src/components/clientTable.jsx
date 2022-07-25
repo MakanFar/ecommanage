@@ -34,9 +34,10 @@ const ClientTable = ({ clients }) => {
   async function deleteClient(id) {
     try {
       await deleteDoc(doc(db, 'clients', id));
-      alert("success")
+      toast.success("Client was removed.");
     } catch (err) {
-      alert(err)
+      console.log(err);
+        toast.error("Something went wrong!");
     }
   }
 
@@ -47,10 +48,11 @@ const ClientTable = ({ clients }) => {
       await updateDoc(docRef, {
         customerName: name
       });
-      alert("success")
+      toast.success("Client was updated.");
       
     } catch (err) {
-      alert(err)
+      console.log(err);
+        toast.error("Something went wrong!");
     }
   }
 
@@ -70,28 +72,7 @@ const ClientTable = ({ clients }) => {
       });
   }
 
-  const  GetInvoices = (id) => {
 
-    try {
-      const docRef = doc(db, "clients", id);
-      const q = query(
-        collection(docRef, 'invoices')
-      );
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const firebaseInvoices = [];
-        querySnapshot.forEach((doc) => {
-          firebaseInvoices.push({ data: doc.data(), id: doc.id });
-        });
-        setInvoices(firebaseInvoices);
-        return () => unsubscribe();
-      });
-    } catch (error) {
-      console.log(error);
-    }
-
-    return Invoices
-
-  }
 
 
   useEffect(() => {
@@ -116,21 +97,41 @@ const ClientTable = ({ clients }) => {
         editable={{
 
           onRowAdd: (newData) => new Promise((resolve, reject) => {
-
             addClient(newData.data.customerName)
+            setTimeout(() => {
+              {
+                const updatedRows = [...tableData, { id: Math.floor(Math.random() * 100), ...newData }]
+                setTableData(updatedRows)
+              }
+              resolve()
+            }, 1000)
          
           }),
           onRowDelete: (oldData) => new Promise((resolve, reject) => {
            
             deleteClient(oldData.id)
+            setTimeout(() => {
+              const dataDelete = [...tableData];
+              const index = oldData.tableData.id;
+              dataDelete.splice(index, 1);
+              setTableData([...dataDelete]);
+              
+              resolve()
+            }, 1000)
 
             }),
 
             onRowUpdate: (newData, oldData) => new Promise((resolve, reject) => {
 
-
               updateClient(oldData.id, newData.data.customerName)
+              setTimeout(() => {
+                const dataUpdate = [...tableData];
+                const index = oldData.tableData.id;
+                dataUpdate[index] = newData;
+                setTableData([...dataUpdate]);
 
+                resolve();
+            }, 1000);
           
             }),
             
