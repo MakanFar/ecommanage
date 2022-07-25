@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import MaterialTable from 'material-table'
-import { findGrandTotal, findDebtTotal, findLength } from '../utils/functions';
+import { findGrandTotal, findDebtTotal, findInvoiceNum } from '../utils/functions';
 import {db} from '../firebase/firebase';
-import { doc, deleteDoc, updateDoc, addDoc, serverTimestamp, collection } from 'firebase/firestore';
+import { doc, deleteDoc, updateDoc, addDoc, serverTimestamp, collection,query, onSnapshot } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { ToastContainer, toast } from 'react-toastify';
@@ -11,7 +11,8 @@ import 'react-toastify/dist/ReactToastify.css';
 const ClientTable = ({ clients }) => {
 
   const navigate = useNavigate();
-  
+  const [Invoices, setInvoices] = useState([]);
+
   const [tableData, setTableData] = useState(clients)
   const [selectedRows, setSelectedRows] = useState([])
   const auth = getAuth();
@@ -22,9 +23,11 @@ const ClientTable = ({ clients }) => {
 
   const columns = [
     { title: "Name", field: "data.customerName" },
-    { title: "Invoices (#)", field: "lenght",editable: 'never',render:(row)=>findLength(row.data) },
-    { title: "Total (Rial)", field: "total", editable: 'never',render:(row)=>findGrandTotal(row.data)},
-    { title: "Debt (Rial)", field: 'debt' , editable: 'never',render:(row)=>findDebtTotal(row.data)},
+    { title: "Invoices (#)", field: "data.ClientInvoiceNum",editable: 'never'},
+    { title: "Total (Rial)", field: "data.ClientInvoiceTotal", editable: 'never'},
+    { title: "Debt (Rial)", field: 'data.ClientInvoiceDebt' , editable: 'never'},
+    { title: "Profit (Rial)", field: 'data.ClientInvoiceProfit' , editable: 'never'},
+
   ]
 
 
@@ -39,7 +42,7 @@ const ClientTable = ({ clients }) => {
 
   async function updateClient(id, name) {
 
-    const docRef = doc(db, "inclientsvoices", id);
+    const docRef = doc(db, "clients", id);
     try {
       await updateDoc(docRef, {
         customerName: name
@@ -67,6 +70,30 @@ const ClientTable = ({ clients }) => {
       });
   }
 
+  const  GetInvoices = (id) => {
+
+    try {
+      const docRef = doc(db, "clients", id);
+      const q = query(
+        collection(docRef, 'invoices')
+      );
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const firebaseInvoices = [];
+        querySnapshot.forEach((doc) => {
+          firebaseInvoices.push({ data: doc.data(), id: doc.id });
+        });
+        setInvoices(firebaseInvoices);
+        return () => unsubscribe();
+      });
+    } catch (error) {
+      console.log(error);
+    }
+
+    return Invoices
+
+  }
+
+
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
   
@@ -75,7 +102,7 @@ const ClientTable = ({ clients }) => {
   
     });
    
-  }, [navigate ,uid]);
+  }, [uid]);
 
   return (
     <div className="App">

@@ -18,9 +18,8 @@ const Invoices = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
-    const [invoices, setInvoices] = useState([]);
+    const [Invoices, setInvoices] = useState([]);
 
-    const [invoiceDetails, setInvoiceDetails] = useState(null);
     const [businessDetails, setBusinessDetails] = useState(null);
     const auth = getAuth();
     const user = auth.currentUser;
@@ -28,7 +27,7 @@ const Invoices = () => {
 
     const props = {
       client: id,
-      invoices: invoices,
+      invoices: Invoices,
     };
 
     

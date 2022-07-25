@@ -1,55 +1,55 @@
-export const findLength = ( { itemList } ) => {
+import {getDocs, doc ,query, collection, where, onSnapshot, serverTimestamp, addDoc} from '@firebase/firestore';
+import {db} from '../firebase/firebase';
 
+
+
+export const findInvoiceNum = ( invoices ) => {
+
+  console.log(invoices)
   let len = 0;
-
-  if (itemList){
-
-      len = itemList.length
-    }
-
-  return len;
-      
-
+  if(invoices){
+    len = invoices.length
+  }
+  return len
+  
 };
 
 
 
-
-export const findGrandTotal = ( { itemList } ) => {
+export const findGrandTotal = (  itemList  ) => {
 
     let total = 0;
     if (itemList){
 
       for (let i = 0; i < itemList.length; i++) {
-        const amount = itemList[i].itemSold * itemList[i].itemQuantity;
+        const amount = itemList[i].data.itemSold * itemList[i].data.itemQuantity;
         total += amount;
       }
       
     }
     
-    return `${total.toLocaleString('en-US')}`;
+    return total;
   };
 
 
-  export const findGrossInvoice = ( { itemList } ) => {
+  export const findGrossInvoice = ( itemList ) => {
 
     let total = 0;
 
     if (itemList){
 
       for (let i = 0; i < itemList.length; i++) {
-        const amount = (itemList[i].itemSold * itemList[i].itemQuantity) - ((itemList[i].itemCost * itemList[i].itemRate) * itemList[i].itemQuantity);
-        total += amount;
+        total += itemList[i].data.itemProfit;
       }
 
     }
 
     
-    return `${total.toLocaleString('en-US')}`;
+    return total;
   };
 
 
-  export const findDebtTotal = ( { itemList } ) => {
+  export const findDebtTotal = (  itemList  ) => {
     
     let debt = 0;
 
@@ -57,43 +57,43 @@ export const findGrandTotal = ( { itemList } ) => {
 
       for (let i = 0; i < itemList.length; i++) {
 
-        const amount = (itemList[i].itemSold * itemList[i].itemQuantity) - itemList[i].itemPaid;
-  
-        debt += amount;
+        debt += itemList[i].data.itemDebt;
+       
+
       }
     }
 
    
-    return `${debt.toLocaleString('en-US')}`;
+    return debt;
   };
 
 
-  export const findDebt = ( item ) => {
+
+  export const calculateDebt = ( itemSold,itemQuantity,itemPaid ) => {
 
     let debt = 0;
 
-    if (item){
 
-      debt = (item.itemSold * item.itemQuantity) - item.itemPaid
-
-    }
+    debt = (itemSold * itemQuantity) - itemPaid
 
     
 
-    return `${debt.toLocaleString('en-US')}`;
+    return debt;
   };
 
-
-  export const findProfit = ( item ) => {
+  export const calculateProfit = ( itemSold,itemCost,itemRate, itemQuantity) => {
 
     let profit = 0;
 
-    if (item){
+    
 
-      profit = (item.itemSold * item.itemQuantity) - ((item.itemCost * item.itemRate) * item.itemQuantity)
+    profit = ( (itemSold ) - (itemCost * itemRate) ) * itemQuantity
 
-    }
+    
 
+    
 
-    return `${profit.toLocaleString('en-US')}`;
+    return profit;
   };
+
+
