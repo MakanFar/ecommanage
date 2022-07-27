@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -15,7 +15,11 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { mainListItems, secondaryListItems } from '../components/listItems';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { signOut } from "firebase/auth";
-import { auth } from "../firebase/firebase";
+import { useNavigate } from 'react-router-dom';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { doc ,query, collection, where, onSnapshot, serverTimestamp, addDoc} from '@firebase/firestore';
+import Loading from '../components/loading';
+import {db} from '../firebase/firebase';
 
 
 const drawerWidth = 240;
@@ -70,6 +74,23 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const mdTheme = createTheme();
 
 const DashboardLayout =({children}) =>{
+
+  const navigate = useNavigate();
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+
+  useEffect(() => {
+
+    onAuthStateChanged(auth, (user) => {
+
+      if (!user) return navigate('/auth');
+    
+     
+    });
+    
+  }, []);
+
   const logOut = () => {
     signOut(auth);
       };
@@ -80,6 +101,8 @@ const DashboardLayout =({children}) =>{
   };
 
   return (
+
+  
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
@@ -108,7 +131,7 @@ const DashboardLayout =({children}) =>{
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Dashboard
+              E- Manage
             </Typography>
             <IconButton color="inherit" onClick={logOut}>
               <Badge  color="secondary">
@@ -156,6 +179,7 @@ const DashboardLayout =({children}) =>{
         </Box>
       </Box>
     </ThemeProvider>
+
   );
 }
 

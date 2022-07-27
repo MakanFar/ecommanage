@@ -97,3 +97,29 @@ export const findGrandTotal = (  itemList  ) => {
   };
 
 
+  export const findGrossProfit = ( itemList, currency ) => {
+
+    let total = 0;
+
+    if (itemList){
+
+      for (let i = 0; i < itemList.length; i++) {
+        total += itemList[i].data.ClientInvoiceProfit;
+      }
+
+    }
+
+    
+    return `${currency} ${total.toLocaleString('en-US')}`;
+  };
+
+
+  export function getCurrentDate(separator='/'){
+
+    let newDate = new Date()
+    let date = newDate.getDate();
+    let month = newDate.getMonth() + 1;
+    let year = newDate.getFullYear();
+    
+    return `${date}${separator}${month<10?`0${month}`:`${month}`}${separator}${year}`
+    }

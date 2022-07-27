@@ -72,19 +72,6 @@ const ClientTable = ({ clients }) => {
       });
   }
 
-
-
-
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-  
-      if (!user) return navigate('/auth');
-      const uid = user.uid;
-  
-    });
-   
-  }, [uid]);
-
   return (
     <div className="App">
       <ToastContainer />

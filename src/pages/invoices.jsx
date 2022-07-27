@@ -16,11 +16,8 @@ import { useParams } from 'react-router-dom';
 const Invoices = () => {
 
     const { id } = useParams();
-    const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [Invoices, setInvoices] = useState([]);
-
-    const [businessDetails, setBusinessDetails] = useState(null);
     const auth = getAuth();
     const user = auth.currentUser;
     let uid='';
@@ -36,7 +33,6 @@ const Invoices = () => {
 
       onAuthStateChanged(auth, (user) => {
 
-        if (!user) return navigate('/auth');
         const uid = user.uid;
     
         try {
@@ -59,7 +55,7 @@ const Invoices = () => {
     
       });
      
-    }, [uid]);
+    }, []);
 
 
 

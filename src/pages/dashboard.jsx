@@ -7,7 +7,6 @@ import Chart from '../components/charts';
 import Deposits from '../components/deposits';
 import Orders from '../components/orders';
 import DashboardLayout from '../layouts/dashboard';
-import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { query, collection, where, onSnapshot } from '@firebase/firestore';
 import {db} from '../firebase/firebase';
@@ -17,42 +16,59 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 function DashboardContent() {
 
-  const [invoices, setInvoices] = useState([]);
+  const [clients, setClients] = useState([]);
+  const [businessDetails, setBusinessDetails] = useState(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
   const auth = getAuth();
   const user = auth.currentUser;
   let uid=''
 
+  const props = {
+    clients: clients,
+    businessDetails: businessDetails,
+  };
 
   useEffect(() => {
-
+  
     onAuthStateChanged(auth, (user) => {
-
-      if (!user) return navigate('/auth');
+  
       const uid = user.uid;
-
+  
       try {
-        const q = query(
-          collection(db, 'invoices'),
+
+        const qb = query(
+          collection(db, 'businesses'),
           where('user_id', '==', uid)
         );
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-          const firebaseInvoices = [];
+        const q = query(
+          collection(db, 'clients'),
+          where('user_id', '==', uid)
+        );
+        onSnapshot(qb, (querySnapshot) => {
+          const firebaseBusinesses  = [];
           querySnapshot.forEach((doc) => {
-            firebaseInvoices.push({ data: doc.data(), id: doc.id });
+            firebaseBusinesses.push({ data: doc.data(), id: doc.id });
           });
-          setInvoices(firebaseInvoices);
+          setBusinessDetails(firebaseBusinesses);
+
+        });
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+          const firebaseClients = [];
+          querySnapshot.forEach((doc) => {
+            firebaseClients.push({ data: doc.data(), id: doc.id });
+          });
+
+          setClients(firebaseClients);
           setLoading(false);
           return () => unsubscribe();
         });
       } catch (error) {
         console.log(error);
       }
-     
+  
     });
-    
-  }, [ uid]);
+   
+      }, []);
 
 
 
@@ -76,7 +92,7 @@ function DashboardContent() {
                     height: 240,
                   }}
                 >
-                  <Chart />
+                  <Chart {...props}/>
                 </Paper>
               </Grid>
               {/* Recent Deposits */}
@@ -89,13 +105,13 @@ function DashboardContent() {
                     height: 240,
                   }}
                 >
-                  <Deposits />
+                  <Deposits {...props} />
                 </Paper>
               </Grid>
               {/* Recent Orders */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <Orders />
+                  <Orders {...props}/>
                 </Paper>
               </Grid>
             </Grid>

@@ -3,9 +3,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
+import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -30,11 +28,28 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const theme = createTheme();
-
+const currencies = [
+  {
+    value: 'USD',
+    label: '$',
+  },
+  {
+    value: 'EUR',
+    label: '€',
+  },
+  {
+    value: 'TRY',
+    label: '₺',
+  },
+  {
+    value: 'تومان',
+    label: 'تومان',
+  },
+];
 const SignupBusiness = () => {
 
   const [businessName, setBusinessName] = useState('');
-  const [currency, setCurrency] = useState('');
+  const [currency, setCurrency] =  React.useState('USD');
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -70,6 +85,10 @@ const SignupBusiness = () => {
       }
     });
   }, [uid]);
+
+  const handleChange = (event) => {
+    setCurrency(event.target.value);
+  };
 
   const handleSubmit = async (e) => {
     try {
@@ -133,13 +152,22 @@ const SignupBusiness = () => {
                 required
                 fullWidth
                 id="currency"
-                label="Currency"
+                select
+                label="Select"
                 name="currency"
                 autoComplete="currency"
                 value={currency}
+                helperText="Please select your currency"
                 onChange={(e) => setCurrency(e.target.value)}
                 autoFocus
-              />
+                  >
+              {currencies.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+                ))}
+                </TextField>
+  
               <Button
                 type="submit"
                 fullWidth

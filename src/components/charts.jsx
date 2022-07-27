@@ -1,7 +1,10 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts';
 import Title from './title';
+import { doc ,query, collection, where, onSnapshot, serverTimestamp, addDoc} from '@firebase/firestore';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {db} from '../firebase/firebase';
 
 // Generate Sales Data
 function createData(time, amount) {
@@ -20,12 +23,48 @@ const data = [
   createData('24:00', undefined),
 ];
 
-export default function Chart() {
-  const theme = useTheme();
+export default function Chart({clients, businessDetails}) {
+
+const auth = getAuth();
+const user = auth.currentUser;
+const theme = useTheme();
+const [Invoices, setInvoices] = useState([]);
+const ids = clients.filter(x => x.id).map(x => x.id)
+
+useEffect(() => {
+
+
+  onAuthStateChanged(auth, (user) => {
+
+    const uid = user.uid;
+
+    try {
+      
+      const docRef = doc(db, "clients", ids);
+      const q = query(
+        collection(docRef, 'invoices')
+      );
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const firebaseInvoices = [];
+        querySnapshot.forEach((doc) => {
+          firebaseInvoices.push({ data: doc.data(), id: doc.id });
+        });
+        setInvoices(firebaseInvoices);
+        return () => unsubscribe();
+      });
+    } catch (error) {
+      console.log(error);
+    }
+
+  });
+ 
+}, []);
+
 
   return (
     <React.Fragment>
       <Title>Today</Title>
+      { console.log(Invoices)}
       <ResponsiveContainer>
         <LineChart
           data={data}

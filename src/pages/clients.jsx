@@ -33,7 +33,6 @@ useEffect(() => {
   
   onAuthStateChanged(auth, (user) => {
 
-    if (!user) return navigate('/auth');
     const uid = user.uid;
 
     try {
@@ -56,7 +55,7 @@ useEffect(() => {
 
   });
  
-}, [uid]);
+}, []);
 
 
 

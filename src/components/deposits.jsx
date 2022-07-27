@@ -2,27 +2,28 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import Title from './title';
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {findGrossProfit, getCurrentDate} from '../utils/functions';
+import { query, collection, where, onSnapshot } from '@firebase/firestore';
+import {db} from '../firebase/firebase';
 
 function preventDefault(event) {
   event.preventDefault();
 }
 
-export default function Deposits() {
-
-  const [itemList, setItemList] = useState([])
+const Deposits = ({clients, businessDetails}) => {
 
 
 
 
   return (
     <React.Fragment>
-      <Title>Recent Deposits</Title>
+      <Title>Total Profits</Title>
       <Typography component="p" variant="h4">
-        $3,024.00
+        {findGrossProfit(clients,businessDetails[0].data.currency )}
       </Typography>
       <Typography color="text.secondary" sx={{ flex: 1 }}>
-        on 15 March, 2019
+      {getCurrentDate()}
       </Typography>
       <div>
         <Link color="primary" href="#" onClick={preventDefault}>
@@ -32,3 +33,5 @@ export default function Deposits() {
     </React.Fragment>
   );
 }
+
+export default Deposits;
